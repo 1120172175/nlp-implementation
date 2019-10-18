@@ -1,110 +1,157 @@
 import numpy as np
-import matplotlib.pyplot as plt
+# import process_data
 
-INPUT_SIZE = 1
-HIDDEN_SIZE = 32  # 隐藏层神经元个数
-OUTPUT_SIZE = 1
-lr = 0.05  # 学习率
-TRAIN_DATA_SIZE = 2000  # 训练集数据样本个数
-VALIDATE_DATA_SIZE = 2000  # 验证集数据样本个数
-EPOCH = 2000  # 迭代次数
+N_STEP = 2
+N_HIDDEN = 2
+N_DIMENSION = 50
+N_CLASS = 7
+lr = 0.01
+# 规定一下，输入X是列向量，格式为(N_STEP*N_DIMENSION, 1)
+
+embedding_path = 'embedding.txt'
+embedding_raw = open(embedding_path, 'r', encoding='utf-8')
+
+word_list = []
+embedding_list = []
+for single in embedding_raw:
+    single = single.split()
+    word_list.append(single[0])
+    temp = [float(weight) for weight in single[1:]]
+    embedding_list.append(temp)
+
+# 这里是把embedding的问题解决了, 从大的预训练集中抽取这个例子中要的单词的embedding先用着
+# embedding = np.array(embedding_list)
+embedding = np.random.random((7, 50))
+# print(embedding.shape)
+sentences = ["i like dog", "i love coffee", "i hate milk"]
 
 
-def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
+word_dict = {w: i for i, w in enumerate(word_list)}
+number_dict = {i: w for i, w in enumerate(word_list)}
+N_CLASS = len(word_dict)
 
 
-def d_sigmoid(x):
-    return sigmoid(x)*(1 - sigmoid(x))
+def make_batch(sentences):
+    input_raw = []
+    target_raw = []
+
+    for sen in sentences:
+        word = sen.split()
+        input = [word_dict[n] for n in word[:-1]]
+        target = word_dict[word[-1]]
+
+        input_raw.append(input)
+        target_raw.append(target)
+
+    input_batch = []
+    target_batch = []
+    for single in input_raw:
+        temp = []
+        for i in single:
+            temp = temp + list(embedding[i])
+        input_batch.append(temp)
+    input_batch = np.array(input_batch)
+
+    for i in target_raw:
+        temp = np.zeros(N_CLASS)
+        temp[i] = 1
+        target_batch.append(temp)
+    target_batch = np.array(target_batch)
+
+    return input_batch, target_batch
 
 
-class Net():
+def softmax(x):
+    return np.exp(x) / np.sum(np.exp(x), axis=0)
+
+
+def d_tanh(x):
+    return 1 - np.tanh(x) ** 2
+
+
+# 我靠 给整忘了，搞到最后发现embedding还没准备
+# 好吧，不用准备embedding了，
+class NNLM():
     def __init__(self):
-        self.w1 = np.random.random((HIDDEN_SIZE, INPUT_SIZE))
-        self.b1 = np.random.random((HIDDEN_SIZE, 1))
+        self.X = np.random.random((N_STEP * N_DIMENSION, 1))
+        self.C = np.random.random((N_CLASS, N_DIMENSION))
+        self.W = np.random.random((N_CLASS, N_STEP * N_DIMENSION))
+        self.b = np.random.random((N_CLASS, 1))
+        self.H = np.random.random((N_HIDDEN, N_STEP * N_DIMENSION))
+        self.d = np.random.random((N_HIDDEN, 1))
+        self.U = np.random.random((N_CLASS, N_HIDDEN))
+        self.tanh = np.random.random((N_HIDDEN, 1))
+        self.loss = np.random.random((1, 1))
 
-        self.w2 = np.random.random((OUTPUT_SIZE, HIDDEN_SIZE))
-        self.b2 = np.random.random((OUTPUT_SIZE, 1))
+        # y是神经元输出结果
+        self.y = np.random.random((N_CLASS, 1))
+        # S是softmax后的结果
+        self.S = np.random.random((N_CLASS, 1))
 
-        # 输入是列向量，input其实就是a0
-        self.a0 = np.random.random((INPUT_SIZE, 1))
-        self.z1 = np.random.random((HIDDEN_SIZE, 1))
-        self.a1 = np.random.random((HIDDEN_SIZE, 1))
-        self.z2 = np.random.random((OUTPUT_SIZE, 1))
+    def cal_loss(self, target, predict):
+        predict = np.log(predict)
+        # print('predict:')
+        # print(predict)
+        return -np.dot(target.T, predict)
 
-    # 计算前向传播计算出来的结果
-    def forward(self, input):
-        self.a0 = input
-        self.z1 = np.dot(self.w1, self.a0) + self.b1
-        self.a1 = sigmoid(self.z1)
-        self.z2 = np.dot(self.w2, self.a1) + self.b2
-        return self.z2
+    # 网络的输入格式是(n-1)m*1的向量
+    def forward(self, x):
+        self.X = x
+        output = np.dot(self.W, x) + self.b
+        tanh = np.tanh(np.dot(self.H, x) + self.d)
+        self.tanh = tanh
+        output += np.dot(self.U, tanh)
+        self.y = output
+        output = softmax(output)
+        self.S = output
+        return output
 
-    # 反向传播更新参数的值，更新w1 b1, w2 b2
     def backward(self, output, lr):
-        dLoss_z2 = self.z2 - output
-        dLoss_w2 = dLoss_z2 * self.a1.T
-        dLoss_b2 = dLoss_z2
+        # 先求softmax的导数矩阵D(n * n)的那个
+        self.loss = self.cal_loss(output, self.S)
 
-        dLoss_z1 = self.w2.T * dLoss_z2 * d_sigmoid(self.z1)
-        dLoss_w1 = dLoss_z1 * self.a0.T
-        dLoss_b1 = dLoss_z1
+        dLoss_y = self.S - output
+        dLoss_W = np.dot(dLoss_y, self.X.T)
+        dLoss_b = dLoss_y
+        dLoss_U = np.dot(dLoss_y, self.tanh.T)
 
-        self.w1 -= lr * dLoss_w1
-        self.b1 -= lr * dLoss_b1
+        dLoss_H = np.multiply(np.dot(self.U.T, dLoss_y), d_tanh(np.dot(self.H, self.X) + self.d))
 
-        self.w2 -= lr * dLoss_w2
-        self.b2 -= lr * dLoss_b2
+        # 在这里赋值是为了避免重复运算dLoss_d的值
+        dLoss_d = dLoss_H
 
+        dLoss_H = np.dot(dLoss_H, self.X.T)
 
-# 目标函数计算公式
-def cal_fun(x):
-    p1 = 0.4 * (x ** 2)
-    # p2 = 0
-    # p3 = 0
-    p2 = 0.3 * np.sin(15 * x)
-    p3 = 0.01 * np.cos(50 * x)
-    y = p1 + p2 + p3
-    return y
+        self.b -= lr * dLoss_b
+        self.d -= lr * dLoss_d
+        self.W -= lr * dLoss_W
+        self.H -= lr * dLoss_H
+        self.U -= lr * dLoss_U
 
 
-# 随机生成一个训练数据集
-train_x = np.random.random((TRAIN_DATA_SIZE, INPUT_SIZE, 1))
-train_y = cal_fun(train_x)
+model = NNLM()
+input_batch, target_batch = make_batch(sentences)
 
+# 升维去符合网络里面的计算要求
+input_batch = input_batch[:, :, np.newaxis]
+target_batch = target_batch[:, :, np.newaxis]
+# for i in input_batch:
+#     print(len(i))
+# print(target_batch.shape)
+# print(input_batch)
 
-# 随机生成一个验证数据集
-validate_x = np.random.random((VALIDATE_DATA_SIZE, INPUT_SIZE, 1))
-validate_y = cal_fun(validate_x)
+for epoch in range(1000):
+    i = 0
+    for input in input_batch:
+        predict = model.forward(input)
+        target = target_batch[i]
+        model.backward(target, lr)
+        i += 1
+    if (epoch + 1) % 5 == 0:
+        print('Epoch: ', '%04d' % (epoch + 1), ', Loss: ', model.loss[0][0])
 
-net = Net()  # 生成一个网络
-# 迭代次数为EPOCH次
-for epoch in range(EPOCH):
-    print("epoch:", epoch)
-    for i in range(TRAIN_DATA_SIZE):
-        net.forward(train_x[i])  # 前向传播
-        net.backward(train_y[i], lr)  # 反向传播并更新参数
+index = 2
+test_in = input_batch[index]
+print(model.forward(test_in))
+print(target_batch[index])
 
-
-# 预测结果存到prediction里面
-prediction = np.random.random((VALIDATE_DATA_SIZE, INPUT_SIZE, 1))
-for i in range(VALIDATE_DATA_SIZE):
-    prediction[i] = net.forward(validate_x[i])  # 进行预测
-
-
-x1 = np.random.rand(TRAIN_DATA_SIZE)
-y1 = np.random.rand(TRAIN_DATA_SIZE)
-y2 = np.random.rand(TRAIN_DATA_SIZE)
-
-
-# 将原来三维的数据集变成一维的numpy数组用于画图
-for i in range(VALIDATE_DATA_SIZE):
-    x1[i] = validate_x[i][0][0]
-    y1[i] = validate_y[i][0][0]
-    y2[i] = prediction[i][0][0]
-
-
-plt.plot(x1, y1, 'ro')  # 验证集上的数据图，红色
-plt.plot(x1, y2, 'bo')  # 网络跑出来的数据图，蓝色
-plt.draw()
-plt.pause(0.5)

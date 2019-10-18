@@ -26,30 +26,43 @@ sentences = [
     "Then cellphone won't take up their time"
 ]
 
+# 还有就是数据处理的问题，需要将原始的sentences变成one-hot的形式
 
-def get_embedding(sentences):
-    # 从预训练模型中获取想要单词的embedding矩阵
-    word_list = " ".join(sentences).split()
-    word_list = [word.lower() for word in word_list]
-    word_list = list(set(word_list))
+word_list = " ".join(sentences).split()
+word_list = list(set(word_list))
 
-    print(len(word_list))
-    # 这个是预训练模型的文件
-    filename = 'F:\\学习\\nlp\\glove-embedding\\glove.6B.300d.txt'
-    save_path = 'F:\\Github\\nlp-implementation\\NNLM\\embedding.txt'
-    data = open(filename, 'r', encoding='utf-8')
-    writeObject = open(save_path, 'w')
-    embedding = []
-    for single in data:
-        temp = single.split()
-        if temp[0] in word_list:
-            embedding.append(single)
-            writeObject.write(single)
-    writeObject.close()
-    return embedding
+word_dict = {w: i for i, w in enumerate(word_list)}
+number_dict = {i: w for i, w in enumerate(word_list)}
+
+data_raw = []
+input = []
+target = []
 
 
-embedding = get_embedding(sentences)
-print(len(embedding))
-# for i in embedding:
-#     print(i)
+def get_number(words):
+    # 给定单词的列表，返回对应单词编号的列表
+    numbers = []
+    for word in words:
+        numbers.append(word_dict[word])
+    return numbers
+
+
+
+for sentence in sentences:
+    data_raw.append(sentence.split())
+
+for data in data_raw:
+    for i in range(len(data) - 3):
+        segment = data[i: i + 3]
+        next = data[i + 3]
+        input.append(get_number(segment))
+        target.append(word_dict[next])
+
+
+
+# print(input)
+# for segment in input:
+#     output = []
+#     for number in segment:
+#         output.append(number_dict[number])
+#     print(output)
