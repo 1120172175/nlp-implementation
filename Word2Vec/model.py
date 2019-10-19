@@ -1,6 +1,7 @@
 import numpy as np
 
-N_CLASS = 13
+
+N_CLASS = 14
 N_HIDDEN = 300
 
 
@@ -16,7 +17,7 @@ class Word2Vec():
         self.y = np.random.random((N_CLASS, 1))
         self.S = np.random.random((N_CLASS, 1))
         self.D = np.random.random((N_CLASS, 1))
-        self.loss = np.random.random((1, 1))
+        self.loss = np.zeros((1, 1))
 
     def cal_loss(self, target, predict):
         predict = np.log(predict)
