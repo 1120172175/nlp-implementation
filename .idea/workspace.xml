@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="fbbfeae1-53a9-43e9-9506-bde03df7392c" name="Default Changelist" comment="" />
+    <list default="true" id="fbbfeae1-53a9-43e9-9506-bde03df7392c" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/FastText/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/FastText/train.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,13 +35,13 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/NNLM/NNLM.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4548">
+            <state relative-caret-position="4992">
               <caret line="192" column="29" selection-start-line="192" selection-start-column="29" selection-end-line="192" selection-end-column="29" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Word2Vec/train.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="286">
@@ -57,10 +59,12 @@
           <provider selected="true" editor-type-id="images" />
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Word2Vec/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-236" />
+            <state relative-caret-position="182">
+              <caret line="7" selection-start-line="7" selection-end-line="8" selection-end-column="48" />
+            </state>
           </provider>
         </entry>
       </file>
@@ -95,10 +99,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="7">
-    <option name="x" value="1911" />
+    <option name="x" value="-9" />
     <option name="y" value="-9" />
-    <option name="width" value="2578" />
-    <option name="height" value="1458" />
+    <option name="width" value="1938" />
+    <option name="height" value="1098" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -106,7 +110,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -123,6 +126,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -255,16 +259,18 @@
       <workItem from="1571289112385" duration="107000" />
       <workItem from="1571388391962" duration="5904000" />
       <workItem from="1571449233103" duration="2806000" />
+      <workItem from="1572012656113" duration="1215000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="24269000" />
+    <option name="totallyTimeSpent" value="25484000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1913" y="-7" width="2062" height="1166" extended-state="7" />
+    <frame x="-7" y="-7" width="1550" height="878" extended-state="7" />
+    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.08891109" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.12080537" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -319,21 +325,16 @@
     <entry file="file://$PROJECT_DIR$/Word2Vector/model.py" />
     <entry file="file://$PROJECT_DIR$/NNLM/NNLM.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4548">
+        <state relative-caret-position="4992">
           <caret line="192" column="29" selection-start-line="192" selection-start-column="29" selection-end-line="192" selection-end-column="29" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Word2Vec/process_data.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Word2Vec/model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-236" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Word2Vec/myplot.png">
       <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Word2Vec/process_data.py">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/Word2Vec/train.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -343,6 +344,13 @@
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Word2Vec/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="182">
+          <caret line="7" selection-start-line="7" selection-end-line="8" selection-end-column="48" />
         </state>
       </provider>
     </entry>

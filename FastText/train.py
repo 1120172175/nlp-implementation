@@ -18,7 +18,7 @@ test_data = [
     ('he is awful', 'negative'),
     ('that is awful', 'negative'),
     ('i love that', 'positive'),
-    ('she likesnipp you', 'negative')
+    ('she likes you', 'negative')
 ]
 
 
